@@ -368,9 +368,11 @@ class PhasedBasedProfiler:
             self._write_batch_composition_stats_to_file_helper(
                 batch_composition_stats)
 
-            jax.profiler.start_trace(
-                self.profile_dir_with_phase_suffix,
-                profiler_options=self.default_profiling_options)
+            prof = xprof()
+            prof.start()
+            # jax.profiler.start_trace(
+            #     self.profile_dir_with_phase_suffix,
+            #     profiler_options=self.default_profiling_options)
             break
 
     def _step_or_stop_profiling(self, batch_composition_stats: dict) -> None:
