@@ -17,6 +17,10 @@ from vllm.v1.core.sched.output import SchedulerOutput as VllmSchedulerOutput
 
 from tpu_inference.logger import init_logger
 from tpu_inference.runner.input_batch import InputBatch
+from google_cloud_mldiagnostics import machinelearning_run
+from google_cloud_mldiagnostics import metrics
+from google_cloud_mldiagnostics import xprof
+
 
 MIN_NUM_SEQS = 8
 
@@ -293,6 +297,18 @@ class PhasedBasedProfiler:
     """
 
     def __init__(self, profile_dir: str):
+        machinelearning_run(
+            name="test1",
+            run_group="mdonati_testing",
+            configs={ "epochs": 100,
+                      "batch_size": 32},
+            project="cloud-tpu-multipod-dev",
+            region="us-central1-c",
+            path="gs://mdonati-v7-bucket", 
+            on_demand_xprof=True
+
+        )   
+
         self.profiling_n_steps_left: int = 0
         self.profile_dir_with_phase_suffix: str = None
         self.num_steps_to_profile_for: int = int(
@@ -310,6 +326,7 @@ class PhasedBasedProfiler:
             "PYTHON_TRACER_LEVEL", 0)
 
         self.current_phase: str = ""
+        self.prof = xprof()
 
         logger.info(
             "Phased-based profiler enabled. Traces will be saved to: %s",
@@ -368,8 +385,7 @@ class PhasedBasedProfiler:
             self._write_batch_composition_stats_to_file_helper(
                 batch_composition_stats)
 
-            prof = xprof()
-            prof.start()
+            self.prof.start()
             # jax.profiler.start_trace(
             #     self.profile_dir_with_phase_suffix,
             #     profiler_options=self.default_profiling_options)
@@ -395,7 +411,8 @@ class PhasedBasedProfiler:
                 batch_composition_stats)
             self.profiling_n_steps_left -= 1
             if self.profiling_n_steps_left <= 0:
-                jax.profiler.stop_trace()
+                self.prof.stop()
+                # jax.profiler.stop_trace()
                 logger.info(
                     f"Profiling for {self.current_phase} phase finished")
                 self.current_phase = ""
