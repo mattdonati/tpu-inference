@@ -303,7 +303,7 @@ class PhasedBasedProfiler:
             configs={ "epochs": 100,
                       "batch_size": 32},
             project="cloud-tpu-multipod-dev",
-            region="us-central1-c",
+            region="us-central1",
             gcs_path="gs://mdonati-v7-bucket", 
             on_demand_xprof=True
 
