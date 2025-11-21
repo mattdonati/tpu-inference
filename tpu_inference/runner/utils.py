@@ -304,7 +304,7 @@ class PhasedBasedProfiler:
                       "batch_size": 32},
             project="cloud-tpu-multipod-dev",
             region="us-central1-c",
-            path="gs://mdonati-v7-bucket", 
+            gcs_path="gs://mdonati-v7-bucket", 
             on_demand_xprof=True
 
         )   
