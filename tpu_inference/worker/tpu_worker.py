@@ -96,14 +96,14 @@ class TPUWorker:
 
         use_jax_profiler_server = os.getenv("USE_JAX_PROFILER_SERVER", False)
         # Only one instance of profiler is allowed
-        if use_jax_profiler_server and self.rank < 1:
-            if not self.devices or 0 in self.device_ranks:
-                jax_profiler_server_port = int(
-                    os.getenv("JAX_PROFILER_SERVER_PORT", 9999))
-                logger.info(
-                    f"Starting JAX profiler server on port {jax_profiler_server_port}"
-                )
-                jax.profiler.start_server(jax_profiler_server_port)
+        # if use_jax_profiler_server and self.rank < 1:
+        #     if not self.devices or 0 in self.device_ranks:
+        #         jax_profiler_server_port = int(
+        #             os.getenv("JAX_PROFILER_SERVER_PORT", 9999))
+        #         logger.info(
+        #             f"Starting JAX profiler server on port {jax_profiler_server_port}"
+        #         )
+        #         jax.profiler.start_server(jax_profiler_server_port)
 
     def initialize_cache(self, num_gpu_blocks: int,
                          num_cpu_blocks: int) -> None:
